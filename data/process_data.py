@@ -3,12 +3,34 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    """ 
+    Load data from different files and merges them together
+  
+    Parameters: 
+    messages_filepath (string): path of the messages
+    categories_filepath (string): path of the categories
+  
+    Returns: 
+    dataframe: a new dataframe
+  
+    """
+    
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     df = messages.merge(categories, on=['id'])
     return df
 
 def clean_categories(df):
+    """ 
+    Extract and clean category names
+  
+    Parameters: 
+    df (dataframe): a pandas dataframe
+  
+    Returns: 
+    dataframe: a dataframe with cleaned categoeries
+  
+    """
     # get categories
     categories = df['categories'].str.split(';', expand=True)
     
@@ -34,11 +56,31 @@ def clean_categories(df):
     return df
 
 def remove_duplicates(df):
+    """ 
+    Removes duplicates in a dataframe
+  
+    Parameters: 
+    df (dataframe): a pandas dataframe
+  
+    Returns: 
+    dataframe: a duplicate-free dataframe
+  
+    """
     df = df.drop_duplicates()
     return df
 
 
 def clean_data(df):
+    """ 
+    Clean data through piping cleaning operations
+  
+    Parameters: 
+    df (dataframe): a pandas dataframe
+  
+    Returns: 
+    dataframe: a cleaned dataframe
+  
+    """
     df = df.pipe(clean_categories).pipe(remove_duplicates)
     return df
 
