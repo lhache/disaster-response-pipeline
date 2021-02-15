@@ -42,7 +42,7 @@ def clean_categories(df):
     # clean values
     for column in categories:
         # set each value to be the last character of the string
-        categories[column] = categories[column].str.split('-')[0][1]
+        categories[column] = categories[column].apply(lambda x: x.split('-')[1] )
         
         # convert column from string to numeric
         categories[column] = categories[column].astype(int)
@@ -87,7 +87,8 @@ def clean_data(df):
 
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///' + database_filename)
-    df.to_sql('DisasterResponse', engine, index=False)
+    df.to_sql('DisasterResponse', engine, index=False, if_exists="replace")
+    df.to_csv('./data/DisasterResponse.csv')
     pass  
 
 
@@ -102,13 +103,10 @@ def main():
 
         print('Cleaning data...')
         df = clean_data(df)
-
-        print(df.head())
-        
         
         print('Saving data...\n    DATABASE: {}'.format(database_filepath))
         save_data(df, database_filepath)
-        
+
         print('Cleaned data saved to database!')
     
     else:
